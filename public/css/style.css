@@ -1,0 +1,78 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+.card {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+.sidebar {
+    background-color: #1e1e1e;
+    padding: 15px;
+    border-radius: 10px;
+}
+.navbar {
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #333;
+}
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e0e0e0;
+    margin-left: 10%;
+}
+.nav-item:hover{
+    background-color: #333333;
+}
+.btn-logout {
+    background-color: #d32f2f;
+    border: none;
+    color: white;
+}
+.btn-logout:hover {
+    background-color: #b71c1c;
+}
+.post-image {
+    width: 100%;  /* Уменьшение размера изображений */
+    max-width: 400px;  /* Ограничение максимальной ширины */
+    height: auto;  /* Авто-высота для сохранения пропорций */
+    cursor: pointer;  /* Изменение курсора для интерактивности */
+}
+
+/* Контейнер для изображений */
+.post-images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Автоматическая сетка с минимальной шириной */
+    gap: 10px; /* Отступы между изображениями */
+    margin-top: 10px; /* Отступ сверху */
+}
+
+/* Стили для изображений */
+.post-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px; /* Скругленные углы */
+    object-fit: cover; /* Обеспечивает, чтобы изображения не искажались */
+    transition: transform 0.3s ease; /* Плавное увеличение при наведении */
+}
+
+/* Эффект увеличения при наведении */
+.post-image:hover {
+    transform: scale(1.05); /* Легкое увеличение изображения */
+}
+
+
+/* Для лайтбокса (если он используется) */
+a[data-lightbox="post"] {
+    display: inline-block;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    color: red;
+    font-size: 20px;
+}
+

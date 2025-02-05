@@ -6,6 +6,7 @@
 
  @include('layouts.sidebar')
 
+
         <!-- Основной контент -->
         <div class="col-md-9">
             <div class="card">
@@ -21,8 +22,12 @@
                         </div>
                     </div>
                     <p>{{$user->status}}</p>
-                    <a class="btn btn-primary btn-sm" href="{{route('settings')}}"> Редактировать профиль </a>
-                </div>
+                    <a class="btn btn-primary btn-sm" href="{{route('settings', $user->login)}}"> Редактировать профиль </a>
+                </div> @include('layouts.friendsbar')
+
+
+
+
             </div>
             <div class="card mt-3">
                 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -45,10 +50,6 @@
 
                 </div>
             </div>
-
-
-
-
                     @foreach($posts as $post)
                         <div class="card mb-3">
                             <div class="card-body">
@@ -67,15 +68,20 @@
                                 @endif
                                 <p><small class="text-muted">{{ $post->created_at->diffForHumans() }}</small></p>
                                 <button class="btn btn-sm btn-warning edit-post-btn" data-post-id="{{ $post->id }}">Редактировать</button>
+                                <form action="{{route('destroy', $post->id)}}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="border-0 bg-transparent">
+                                        <i class="fas fa-trash text-danger"> </i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     @endforeach
-
-
-
-
-
-
+            <!-- Пагинация -->
+            <div class="d-flex justify-content-center">
+                {{ $posts->links('pagination::bootstrap-4') }}
+            </div>
         </div>
     </div>
 </div>

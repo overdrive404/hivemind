@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\User;
 use App\Models\PostImage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -11,69 +12,13 @@ use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
-    public function index()
+    public $user;
+    public function __construct()
     {
-        // Получаем посты авторизованного пользователя
-        $posts = Post::where('user_id', Auth::id())->latest()->paginate(5);
-        if (request()->wantsJson()) {
-            return $posts;
-        }
-        $user = auth()->user();
-        // Возвращаем представление с постами
-        return view('userpage.user', compact('posts', 'user'));
+        $this->user = auth()->user();
     }
 
-    public function settings(){
 
-        return view('userpage.settings');
-
-    }
-
-    public function updateSettings(Request $request)
-    {
-        $user = Auth::user();
-        // Валидация
-        $request->validate([
-            'name' => 'required|string',
-            'login' => [
-                'required',
-                'string',
-                'max:255',
-                'unique:users,login,' . $user->id,
-                'regex:/^[a-zA-Z0-9_]+$/',
-            ],
-            'status'=> 'required|string',
-            'avatar' => 'nullable|image|max:2048',
-            'header' => 'nullable|image|max:4096',
-        ]);
-
-        // Обновление имени
-        $user->name = $request->name;
-        $user->status = $request->status;
-
-        // Обновление логина
-        $user->login = $request->login;
-
-        // Обновление аватарки
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                Storage::delete($user->avatar);
-            }
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
-        }
-
-        // Обновление шапки
-        if ($request->hasFile('header')) {
-            if ($user->header) {
-                Storage::delete($user->header);
-            }
-            $user->header = $request->file('header')->store('headers', 'public');
-        }
-
-        $user->save();
-
-        return redirect()->back()->with('success', 'Настройки обновлены!');
-    }
 
     public function store(Request $request)
     {
@@ -102,7 +47,9 @@ class PostController extends Controller
             }
         }
 
-        return redirect()->route('home')->with('success', 'Пост опубликован!');
+        $user = Auth::user();
+
+        return redirect()->route('user.show', ['login' => $user->login])->with('success', 'Пост опубликован!');
     }
 
     public function update(Request $request, Post $post)
@@ -141,6 +88,11 @@ class PostController extends Controller
         if ($request->ajax()) {
             return response()->json($posts);
         }
-        return view('userpage.user', compact('posts'));
+        return view('user.user', compact('posts'));
+    }
+
+    public function destroy($post){
+        $post = Post::find($post);
+        $post->delete();
     }
 }

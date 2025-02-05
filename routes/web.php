@@ -2,14 +2,38 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\FriendController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\HomeController;
 
 Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::get('/chat/{receiverId}', [MessageController::class, 'index'])->name('chat.index');
+    Route::post('/chat/send', [MessageController::class, 'store'])->name('chat.send');
+
+
+    Route::get('/friends', [FriendController::class, 'show'])->name('friends.show');
+    Route::post('/friends/request/{id}', [FriendController::class, 'sendRequest'])->name('friends.request');
+    Route::post('/friends/accept/{id}', [FriendController::class, 'acceptRequest'])->name('friends.accept');
+    Route::post('/friends/decline/{id}', [FriendController::class, 'declineRequest'])->name('friends.decline');
+    Route::post('/friends/remove/{id}', [FriendController::class, 'removeFriend'])->name('friends.remove');
+    Route::get('/friends/requests', [FriendController::class, 'friendRequests'])->name('friends.requests');
+
+
+
+
     // Домашняя страница пользователя (лента постов)
-    Route::get('/user/home', [PostController::class, 'index'])->name('home');
-    Route::get('/user/settongs', [PostController::class, 'settings'])->name('settings');
-    Route::put('/settings', [PostController::class, 'updateSettings'])->name('settings.update');
+    Route::get('/user/{login}', [UserController::class, 'show'])->name('user.show');
+    Route::get('/settings/{login}', [UserController::class, 'settings'])->name('settings');
+    Route::put('/settings', [UserController::class, 'updateSettings'])->name('settings.update');
+
+
+    Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
 
 
     // CRUD для постов
@@ -17,7 +41,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', 'index')->name('index'); // Список постов
         Route::post('/', 'store')->name('store'); // Создание поста
         Route::put('/{post}', 'update')->name('update'); // Обновление поста
-        Route::delete('/{post}', 'destroy')->name('destroy'); // Удаление поста
         Route::get('/load', 'loadMore')->name('loadMore'); // Загрузка постов для infinite scroll
     });
 });

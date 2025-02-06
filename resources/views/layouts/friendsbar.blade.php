@@ -30,13 +30,6 @@
                 </form>
             @endif
         @endif
-        <h3>Друзья ({{ $user->friends->count() }})</h3>
-        <ul>
-            @forelse($user->friends as $friend)
-                <li><a href="{{ route('user.show', $friend->friend->login) }}">{{ $friend->friend->name}}</a></li>
-            @empty
-                <p>Нет друзей</p>
-            @endforelse
-        </ul>
+
     </div>
 </div>

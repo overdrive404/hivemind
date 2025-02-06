@@ -9,35 +9,28 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    public function index($receiverId)
+
+    public function chatList()
     {
-        $user = Auth::user();
+        $userId = auth()->id();
 
-        // Получаем переписку с выбранным пользователем
-        $messages = Message::where(function ($query) use ($user, $receiverId) {
-            $query->where('sender_id', $user->id)->where('receiver_id', $receiverId);
-        })
-            ->orWhere(function ($query) use ($user, $receiverId) {
-                $query->where('sender_id', $receiverId)->where('receiver_id', $user->id);
-            })
-            ->orderBy('created_at')
-            ->get();
+        // Получаем список пользователей, с которыми у текущего пользователя есть переписка
+        $chats = Message::where('sender_id', $userId)
+            ->orWhere('receiver_id', $userId)
+            ->with(['sender', 'receiver'])
+            ->get()
+            ->groupBy(function ($message) use ($userId) {
+                return $message->sender_id == $userId ? $message->receiver_id : $message->sender_id;
+            });
 
-        return view('chat.index', compact('messages', 'receiverId'));
+        return view('messages.list', compact('chats'));
     }
-
-    public function store(Request $request)
+    public function sendMessage(Request $request)
     {
-        dd($request->all());
-        $request->validate([
-            'receiver_id' => 'required|exists:users,id',
-            'content' => 'required|string',
-        ]);
-
         $message = Message::create([
             'sender_id' => Auth::id(),
-            'receiver_id' => $request->receiver_id,
-            'content' => $request->content,
+            'receiver_id' => $request->input('receiver_id'),
+            'content' => $request->input('content'),
         ]);
 
         broadcast(new MessageSent($message))->toOthers();

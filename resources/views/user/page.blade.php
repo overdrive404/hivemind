@@ -24,10 +24,6 @@
                     <p>{{$user->status}}</p>
                     <a class="btn btn-primary btn-sm" href="{{route('settings', $user->login)}}"> Редактировать профиль </a>
                 </div> @include('layouts.friendsbar')
-
-
-
-
             </div>
             <div class="card mt-3">
                 <meta name="csrf-token" content="{{ csrf_token() }}">

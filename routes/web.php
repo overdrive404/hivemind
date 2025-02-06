@@ -6,15 +6,22 @@ use App\Http\Controllers\FriendController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ChatController;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Auth;
 
 Auth::routes();
+Route::post('/broadcasting/auth', function () {
+    return auth()->user();
+})->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/messages', [MessageController ::class, 'chatList'])->name('messages.show');
 
-    Route::get('/chat/{receiverId}', [MessageController::class, 'index'])->name('chat.index');
-    Route::post('/chat/send', [MessageController::class, 'store'])->name('chat.send');
+    Route::get('/chat/{user}', [ChatController::class, 'index'])->name('chat');
+    Route::post('/messages/send', [MessageController::class, 'sendMessage'])->name('messages.send');
 
 
     Route::get('/friends', [FriendController::class, 'show'])->name('friends.show');

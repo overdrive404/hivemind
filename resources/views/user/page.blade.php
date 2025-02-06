@@ -5,8 +5,6 @@
     <div class="row">
 
  @include('layouts.sidebar')
-
-
         <!-- Основной контент -->
         <div class="col-md-9">
             <div class="card">
@@ -22,9 +20,15 @@
                         </div>
                     </div>
                     <p>{{$user->status}}</p>
-                    <a class="btn btn-primary btn-sm" href="{{route('settings', $user->login)}}"> Редактировать профиль </a>
+
+                    @if(auth()->id() !== $user->id)
+                        <a href="{{ url('/chat/' . $user->id) }}" class="btn btn-primary">Написать</a>
+                    @else  <a class="btn btn-primary btn-sm" href="{{route('settings', $user->login)}}"> Редактировать профиль </a>
+
+                    @endif
                 </div> @include('layouts.friendsbar')
             </div>
+            @if(auth()->id() === $user->id)
             <div class="card mt-3">
                 <meta name="csrf-token" content="{{ csrf_token() }}">
                 <div class="card-body">
@@ -43,9 +47,9 @@
 
                         <button type="submit" class="btn btn-primary">Опубликовать</button>
                     </form>
-
                 </div>
             </div>
+            @endif
                     @foreach($posts as $post)
                         <div class="card mb-3">
                             <div class="card-body">
@@ -63,6 +67,7 @@
                                     </div>
                                 @endif
                                 <p><small class="text-muted">{{ $post->created_at->diffForHumans() }}</small></p>
+                                @if(auth()->id() === $user->id)
                                 <button class="btn btn-sm btn-warning edit-post-btn" data-post-id="{{ $post->id }}">Редактировать</button>
                                 <form action="{{route('destroy', $post->id)}}" method="POST" style="display:inline;">
                                     @csrf
@@ -71,6 +76,7 @@
                                         <i class="fas fa-trash text-danger"> </i>
                                     </button>
                                 </form>
+                                @endif
                             </div>
                         </div>
                     @endforeach

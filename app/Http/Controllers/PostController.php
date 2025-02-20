@@ -22,7 +22,6 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-
         // Валидация данных
         $request->validate([
             'text' => 'required|string',

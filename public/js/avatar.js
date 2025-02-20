@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let postText = postTextElem.innerText;
 
-            // Проверяем, нет ли уже формы редактирования
+            // Проверка, нет ли уже формы редактирования
             if (postCard.querySelector(".edit-form")) {
                 return;
             }
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <input type="file" id="new-images-${postId}" multiple class="form-control mt-2">
                 <div id="preview-new-images-${postId}" class="mt-2"></div>
                 <div class="mt-2">
-                    <button class="btn btn-primary save-edit-btn" data-post-id="${postId}">Сохранить</button>
+                    <button type="button" class="btn btn-primary save-edit-btn" data-post-id="${postId}">Сохранить</button>
                     <button class="btn btn-secondary cancel-edit-btn" data-post-id="${postId}">Отмена</button>
                 </div>
             `;
@@ -102,15 +102,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // Вставляем форму в конец карточки поста
             postCard.querySelector(".card-body").appendChild(editForm);
 
-            // ✅ Обработчик кнопки "Отмена"
+
             editForm.querySelector(".cancel-edit-btn").addEventListener("click", function () {
-                editForm.remove(); // Просто удаляем форму, не трогая оригинальный текст и изображения
+                editForm.remove(); // Удаление формы
             });
         });
     });
 
     document.addEventListener("click", function (event) {
         if (event.target.classList.contains("save-edit-btn")) {
+            event.preventDefault();
             let postId = event.target.dataset.postId;
             let newText = document.getElementById(`edit-text-${postId}`).value;
             let imagesInput = document.getElementById(`new-images-${postId}`);
